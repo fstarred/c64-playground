@@ -1,4 +1,4 @@
-# c64-playground
+# C64-playground
 A repository dedicate to C64 programming, music, etc
 
 # Contents
@@ -12,17 +12,33 @@ Therefore, in many cases it may be enough to replace <i>underscore</i> char with
 
 ## Sources
 
-### map_colchar_4x4.asm
+### How to compile
+
+Edit *compile.bat* in root repo directory and set *64tass* and vice path, then launch as:
+
+```
+compile.bat <file.asm>
+
+example:
+compile.bat asm\map_colchar_4x4.asm
+
+```
+
+If all paths are set correctly, program should be compiled and run automatically with *VICE* emulator
+
+### Files
+
+#### map_colchar_4x4.asm
 
 An example of colourized per char mode
 
-### map_coltile 4x4.asm
+#### map_coltile 4x4.asm
 
 An example of colourized per tile map
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/metalwarrior.gif?raw=true) 
 
-### rscrolling_dbuffer.asm
+#### rscrolling_dbuffer.asm
 
 An example of right scrolling screen using double buffering
 
