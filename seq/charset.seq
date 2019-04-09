@@ -1,0 +1,53 @@
+;---------------------------------------
+;
+;   IN-MEMORY CHARSET EXAMPLE
+;
+;
+;---------------------------------------
+
+         *= $1000
+
+         JSR $E544
+
+         SEI
+MAIN
+         LDA #0
+         CMP $D012
+         BNE *-3
+
+         LDA #4
+         STA $D021
+
+         LDA #$17
+         STA $D018    ;VIC BANK 2
+
+         LDA #$00
+         LDX #$00
+
+LOOP
+         STA $0400,X
+         INX
+         TXA
+         BNE LOOP
+
+         LDA #$82
+         CMP $D012
+         BNE *-3
+
+         LDA #6
+         STA $D021
+
+         LDA #$15
+         STA $D018    ; VIC BANK 1
+
+         LDA #$00
+         LDX #$00
+
+LOOP2
+         STA $0590,X
+         INX
+         TXA
+         BNE LOOP2
+
+         JMP MAIN
+
