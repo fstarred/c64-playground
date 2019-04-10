@@ -1,0 +1,160 @@
+;---------------------------------------
+;
+;
+;    SMOOTH SCROLLING EXAMPLE
+;
+;
+;---------------------------------------
+
+         *= $1000
+
+LINA     = $00
+LINB     = $40
+FRAMES   = $02
+XSCROLLOFF = $01
+STARTXOFFSET = $07
+SCREEN   = $0400+(40*0)
+
+         JSR $E544 ; CLEAR SCREEN
+
+         LDX #0
+         LDA MESSAGEFIXED
+LOOPMSGFIX
+         AND #$3F
+         STA SCREEN+(40*2)+10,X
+         INX
+         LDA MESSAGEFIXED,X
+         CMP #$FF
+         BNE LOOPMSGFIX
+
+         SEI       ;TURN OFF INT
+
+         LDA #$7F
+         LDX #$01
+         STA $DC0D ;TURN OFF CIA1 INT
+         STA $DD0D ;TURN OFF CIA2 INT
+         STX $D01A ;TURN ON RASTER INT
+
+         LDA #$1B
+         LDX #$08
+         LDY #$14
+         STA $D011 ;SET TEXT MODE
+         STX $D016 ;SINGLE COLOR
+         STY $D018 ;SCREEN AT SCREEN
+
+         LDA #<INA ;LOW PART OF ADDR INT
+         LDX #>INA ;HI  PART OF ADDR INT
+         LDY #LINA ;LINE TO TRIGGER
+         STA $0314 ;STORE TO INT VECTOR
+         STX $0315
+         STY $D012 ;SET LINE TO TRIGGER
+
+         LDA $DC0D ;ACK CIA 1 INT
+         LDA $DD0D ;ACK CIA 2 INT
+         ASL $D019 ;ACK VIC INT
+         CLI
+
+         JMP * ; INFINITE LOOP
+
+INA
+
+         LDA $D016
+         AND #248
+         ORA XOFFSET
+         STA $D016
+
+         LDA #2
+         STA $D021
+
+         DEC FRAMECOUNT
+         BNE EXITINT
+         LDA #FRAMES
+         STA FRAMECOUNT
+
+XSCROLL
+         LDA XOFFSET
+         SBC #XSCROLLOFF ;PIXEL SCROLLED
+         TAX ; STORE BEFORE AND
+         AND #7
+         STA XOFFSET
+
+         LDA $D016
+         AND #248
+         ORA XOFFSET
+         STA $D016
+
+         CPX #$00 ; CHECK IF LESS THAN 0
+         BPL EXITINT
+
+PREPARESCROLL
+         LDX #38
+         LDY #0
+SCROLL
+         LDA SCREEN+1,Y
+         STA SCREEN,Y
+         INY
+         DEX
+         BPL SCROLL
+
+GETNEWCHAR
+         INC NEWCHAR
+         LDX NEWCHAR
+         LDA MESSAGE,X
+         CMP #$FF
+         BNE COPYCHAR
+         LDX #$FF
+         STX NEWCHAR
+         JMP GETNEWCHAR
+COPYCHAR
+         AND #$3F
+         STA SCREEN+39
+
+EXITINT
+
+         LDA #<INB ;LOW PART OF ADDR INT
+         LDX #>INB ;HI  PART OF ADDR INT
+         LDY #LINB ;LINE TO TRIGGER
+         STA $0314 ;STORE TO INT VECTOR
+         STX $0315
+         STY $D012 ;SET LINE TO TRIGGER
+
+
+         ASL $D019 ;ACK INT (RE-ENABLE)
+         JMP $EA81
+
+INB
+         LDA $D016
+         AND #248
+         STA $D016
+
+         LDA #0
+         STA $D021
+
+         LDA #<INA ;LOW PART OF ADDR INT
+         LDX #>INA ;HI  PART OF ADDR INT
+         LDY #LINA ;LINE TO TRIGGER
+         STA $0314 ;STORE TO INT VECTOR
+         STX $0315
+         STY $D012 ;SET LINE TO TRIGGER
+
+         ASL $D019
+         JMP $EA81
+
+
+
+FRAMECOUNT
+         .BYTE FRAMES
+XOFFSET
+         .BYTE STARTXOFFSET
+NEWCHAR
+         .BYTE $FF
+MESSAGE
+         .TEXT "HELLO GUYS THIS IS A "
+         .TEXT "SMOOTH TEXT SCROLLING "
+         .TEXT "EXAMPLE    "
+         .BYTE $FF
+
+MESSAGEFIXED
+         .TEXT "THIS IS FIXED MESSAGE"
+         .BYTE $FF
+
