@@ -28,18 +28,24 @@ If all paths are set correctly, program should be compiled and run automatically
 
 ### Files
 
-#### map_colchar_4x4.asm
+#### Read map with 4x4 tiles - colour mode: char (map_colchar_4x4.asm)
 
-An example of colourized per char mode
+Full decoding of a map 4x4 tiles, colour mode: char
 
-#### map_coltile 4x4.asm
+#### Read map with 4x4 tiles - colour mode: tile (map_coltile 4x4.asm)
 
-An example of colourized per tile map
+Full decoding of a map 4x4 tiles, colour mode: tile
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/metalwarrior.gif?raw=true) 
 
-#### rscrolling_dbuffer.asm
+#### Right scrolling with double buffer (rscrolling_dbuffer.asm)
 
-An example of right scrolling screen using double buffering
+Right screen scrolling using double buffering
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/auto_scroll.gif?raw=true)
+
+### Mixed graphics mode (mixedmode.seq)
+
+Displaying BIT MAP and TEXT in MULTICOLOR mode at same time
+
+![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/images/mixedmode.jpg?raw=true)
