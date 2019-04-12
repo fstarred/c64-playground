@@ -26,19 +26,17 @@ compile.bat asm\map_colchar_4x4.asm
 
 If all paths are set correctly, program should be compiled and run automatically with *VICE* emulator
 
-### Files
-
-#### Read map with 4x4 tiles - colour mode: char (map_colchar_4x4.asm)
+### Read map with 4x4 tiles - colour mode: char (map_colchar_4x4.asm)
 
 Full decoding of a map 4x4 tiles, colour mode: char
 
-#### Read map with 4x4 tiles - colour mode: tile (map_coltile 4x4.asm)
+### Read map with 4x4 tiles - colour mode: tile (map_coltile 4x4.asm)
 
 Full decoding of a map 4x4 tiles, colour mode: tile
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/metalwarrior.gif?raw=true) 
 
-#### Right scrolling with double buffer (rscrolling_dbuffer.asm)
+### Right scrolling with double buffer (rscrolling_dbuffer.asm)
 
 Right screen scrolling using double buffering
 
