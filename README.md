@@ -26,25 +26,29 @@ compile.bat asm\map_colchar_4x4.asm
 
 If all paths are set correctly, program should be compiled and run automatically with *VICE* emulator
 
-### Read map with 4x4 tiles - colour mode: char (map_colchar_4x4.asm)
+### Read map - colour mode: char
 
-Full decoding of a map 4x4 tiles, colour mode: char
+Full decoding of a char map
 
-### Read map with 4x4 tiles - colour mode: tile (map_coltile 4x4.asm)
+### Read map with 4x4 tiles - colour mode: char
 
-Full decoding of a map 4x4 tiles, colour mode: tile
+Full decoding of a map composed by 4x4 tiles, colour mode: char
+
+### Read map with 4x4 tiles - colour mode: tile
+
+Full decoding of a map composed by 4x4 tiles, colour mode: tile
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/metalwarrior.gif?raw=true) 
 
-### Right scrolling with double buffer (rscrolling_dbuffer.asm)
+### Right scrolling with double buffer
 
 Right screen scrolling using double buffering
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/auto_scroll.gif?raw=true)
 
-### Mixed graphics mode (mixedmode.seq)
+### Mixed graphics mode
 
-Displaying BIT MAP and TEXT in MULTICOLOR mode at same time
+Displaying BIT MAP and TEXT in MULTICOLOR mode, respectively on the upper and bottom side of the screen
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/images/mixedmode.jpg?raw=true)
 
