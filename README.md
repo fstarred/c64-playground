@@ -47,3 +47,159 @@ Right screen scrolling using double buffering
 Displaying BIT MAP and TEXT in MULTICOLOR mode at same time
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/images/mixedmode.jpg?raw=true)
+
+
+## External references
+
+The following is a collection of noticeable source sites:
+
+### Specs
+
+* http://www.6502.org/tutorials/6502opcodes.html - 6502 OP Code, a quick and efficent reference guide
+* http://sta.c64.org/cbm64mem.html - The C64 Memory map
+* http://codebase64.org - One of the most important code and article repository for C64
+* https://csdb.dk - The C64 Scene Database
+
+### Articles
+* http://www.antimon.org/code.asp - This is probably the holy bible for start programming with C64 (at least it was for me)
+* https://github.com/petriw/Commodore64Programming
+* https://dwheeler.com/6502/oneelkruns/asm1step.html - An assembly friendly guide
+
+### Resources
+* http://kofler.dot.at/c64/
+* http://www.beigerecords.com/c64music.html
+
+## Emulators
+
+### Vice
+Vice is propably the most famous emulator for C64. It contains several internal and included tools to improve the emulation's experience.
+
+### c1541
+If you want to develop with C64 using native assemblers like _Turbo Assembler_ or _Turbo Macro Pro_, you'll probably need to use this disk tool.
+Some hints:
+
+Create a disk image called disk1 and attach it to the current console session.
+
+``
+c1541 -format disk1,id d64 disk1.d64 -attach disk1.d64
+``
+
+Read disk content from the attached disk image
+
+``
+list
+``
+
+Read a .seq file from the attached disk image and write to the host directory
+
+``
+read "filename,s"
+``
+
+Write a .seq file from host to the attached disk image
+
+``
+write "filename" "filename,s"
+``
+
+### VICE MONITOR
+
+Vice monitor is an integrated VICE tool that help developers to DEBUG its software.
+
+Let's see most common commands:
+
+```
+break <memory address> - place a breakpoint at memory address
+g - goto until next break point is reached
+n - goto next instruction
+dis [<number>] - disable breakpoint (ALL if no input specified)
+en [<number>]  - enable breakpoint (ALL if no input specified)
+del [<number>] - delete breakpoint (ALL if no input specified)
+```
+
+#### What is the memory address of my code ???
+
+Simple answer: place a label before your opcode.
+
+example:
+
+```
+mydebuglabel
+  sta $0400
+```
+
+In order to achieve what value the Accumulator contains where stores to $0400, you need to know the _mydebuglabel_'s memory address.
+Use this command with Turbo assembler / Turbo Macro Pro with:
+
+``
+{u+*
+``
+
+The output produces is like this:
+
+``
+mydebuglabel = $1376
+``
+
+Now, to put a breakpoint just type 'break 1376' on VICE MONITOR and then 'g' to run the assembled program.
+
+*Notice:* Remember to assemble your program before running this or you may get wrong memory address values
+
+#### Labels with 64tasm
+
+If you're using Cross-Asm software like _64Tasm_ instead, run the compiler with option:
+
+``
+-l labels.txt
+``
+
+This write all the label's info into _labels.txt_ file
+
+### Turbo Assembler command hints
+
+Load prg from disk to memory address
+
+``
+{SHIFT+L - load to memory addr
+``
+
+Save a file with the content of a memory range (reccomanded in place of standard {5 in some cases)
+
+``
+{SHIFT+S - save to memory addr
+``
+
+``
+{u+* - show labels
+``
+### BASIC command hints
+
+Show disk content
+
+``
+LOAD"$",8
+``
+
+Delete a file
+
+``
+OPEN1,8,15,"S:FILENAME":CLOSE1
+``
+
+Load data in memory
+
+```
+10 sys 57812"<file>",8
+20 poke781,<LO>:poke782,<HI>
+30 poke780,0
+40 sys65493
+```
+
+Program Restore to make jump at address x ($8000 in the case below)
+
+```
+POKE 792,0: POKE 793,128
+```
+
+HI = hi byte in decimal
+LO = lo byte in decimal
