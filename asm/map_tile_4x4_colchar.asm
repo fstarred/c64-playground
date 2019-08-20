@@ -72,9 +72,9 @@ keymode = 0
     sta $dd0d
     stx $d01a
     
-    lda #$1b
-    ldx #$c8
-    ldy #$17
+    lda #$17
+    ldx #$d8
+    ldy #$18
     sta $d011
     stx $d016
     sty $d018
@@ -88,14 +88,7 @@ keymode = 0
     
     lda $dc0d
     lda $dd0d
-    asl $d019
-    
-	lda #$18
-	sta $d018
-	lda #$d8
-	sta $d016
-	lda #$17
-	sta $d011    
+    asl $d019    
     ; end irq
     
     ; code
