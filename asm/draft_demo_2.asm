@@ -876,20 +876,20 @@ stop     .byte $00 ; stop flag
 ;---------------------------------------
 
 	*=charaddr
-		.binary "Demo2/char.bin"
+		.binary "./draft/Demo2/char.bin"
 	
 	*=mapaddr
-		.binary "Demo2/map.bin"
+		.binary "./draft/Demo2/map.bin"
 	
 	*=attribsaddr
-		.binary "Demo2/attribs.bin"
+		.binary "./draft/Demo2/attribs.bin"
 	
 	*=charaddr2
-		.binary "Demo2/char2.bin"
+		.binary "./draft/Demo2/char2.bin"
 	
 	*=mapaddr2
-		.binary "Demo2/map2.bin"
+		.binary "./draft/Demo2/map2.bin"
 	
 	*=attribsaddr2
-		.binary "Demo2/attribs2.bin"
+		.binary "./draft/Demo2/attribs2.bin"
 	

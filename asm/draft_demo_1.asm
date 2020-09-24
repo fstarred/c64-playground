@@ -1180,22 +1180,20 @@ starposition
 ;---------------------------------------
 
 	*=sidaddr
-		.binary "../resources/Demo/demosong1.sid"
+		.binary "./draft/Demo1/demosong1.sid"
 		
-	;*=spr1addr
-	;	.binary "../resources/Demo/ball.bin"
 	*=spr1addr
 		.byte $80
 		
 	*=logoaddr
-		.binary "../resources/Demo/logo_320_64.prg",2
+		.binary "./draft/Demo1/logo_320_64.prg",2
 		
 	*=charaddr
-		.binary "Demo/char.bin"
+		.binary "./draft/Demo1/char.bin"
 	
 	*=mapaddr
-		.binary "Demo/map.bin"
+		.binary "./draft/Demo1/map.bin"
 	
 	*=attribsaddr
-		.binary "Demo/attribs.bin"
+		.binary "./draft/Demo1/attribs.bin"
 		
