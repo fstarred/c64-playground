@@ -52,6 +52,21 @@ Displaying BIT MAP and TEXT in MULTICOLOR mode, respectively on the upper and bo
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/images/mixedmode.jpg?raw=true)
 
+## Hints
+
+### Badline
+
+Badline occurs when VIC-II takes some time from CPU for fetching some stuff like colours, sprite or character data.
+
+This operation takes 40 cycles, thus CPU has just 23 cycles left for computing.
+
+In order to check if a certain line is the infamous badline, consider this formula:
+
+```
+D012 & 3 == D011 & 3 and $30 < D012 < $f7
+```
+
+Here are some badlines that occur on text mode ($D011 = $1B): $33, $3B, $43, $4B, $53, etc..
 
 ## External references
 
