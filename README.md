@@ -52,6 +52,40 @@ Displaying BIT MAP and TEXT in MULTICOLOR mode, respectively on the upper and bo
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/images/mixedmode.jpg?raw=true)
 
+### Koala Image format
+
+Displaying a 320x64 BIT MAP image
+
+![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/images/image-mode.png?raw=true)
+
+Normally, for a 320x200 image, assuming you load image at $2000, you would have :
+
+```
+$2000 - $3f3f (8000 bytes bitmap data)
+$3f40 - $4327 (1000 bytes screen RAM)
+$4328 - $470f (1000 bytes color  RAM)
+$4710 background
+```
+
+Since we load an image of 64 pixels height instead of 200, we must calculate effective bitmap data:
+
+```
+320pixels / 8 = 40 bytes * 64 height = 2560 bytes bitmap data
+320pixels / 8 = 40 bytes * 64 height / 8 = 140 bytes screen ram data
+320pixels / 8 = 40 bytes * 64 height / 8 = 140 bytes color ram data
+```
+
+Thus:
+
+```
+$2000 - $29ff (2560 bytes bitmap data)
+$2a00 - $2b3f (140 bytes screen RAM)
+$2b40 - $2c3f (140 bytes color  RAM)
+$2c40 background
+```
+
+
+
 ## Hints
 
 ### Badline
