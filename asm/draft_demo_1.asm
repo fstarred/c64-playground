@@ -97,7 +97,7 @@ scrflgbuf = $40
 
 ;0 = KEY DOWN
 ;1 = KEY PRESS
-keymode = 0
+keymode = 1
 	
 ;---------------------------------------
 ;
@@ -765,7 +765,7 @@ rr19
 	#screenswap
 
 	#create_star
-        
+
     #color_shift_lower
     
 	#prepare_extractcolumn	
