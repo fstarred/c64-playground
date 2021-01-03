@@ -97,7 +97,7 @@ scrflgbuf = $40
 
 ;0 = KEY DOWN
 ;1 = KEY PRESS
-keymode = 1
+keymode = 0
 	
 ;---------------------------------------
 ;
