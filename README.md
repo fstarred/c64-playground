@@ -84,7 +84,62 @@ $2b40 - $2c3f (140 bytes color  RAM)
 $2c40 background
 ```
 
+## Demo
 
+### Nightly City
+
+![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/nightly-city.gif?raw=true)
+
+#### Scrolling carousel text
+
+This effect was ripped from [DavesClassics C64 video 05 YouTube video](https://www.youtube.com/watch?v=JR9Ou-62cEY&t=708s).
+
+The carousel effect is done by rolling colors stored in ram and apply each rasterline.
+
+Snippet for rotating color:
+
+```
+rotatecolours
+	ldx #0
+looprotcol
+	lda ramcolour+1,x
+	sta ramcolour,x
+	inx
+	cpx #$40
+	bne looprotcol
+	lda ramcolour
+	sta ramcolour-1+$40
+```
+
+Apply different color for each line:
+
+```
+	ldx #0
+colourloop
+	lda ramcolour,x
+	tay
+
+	lda $d012
+	cmp $d012
+	beq *-3
+
+	sty $d021
+	inx
+
+	lda #irq_0+9
+	cmp $d012
+	bne colourloop
+```
+
+#### Print big text on upper side of the screen
+
+The font size is 2x2 and is disposed easily as each letter takes 4 bytes which are consecutively ordered.
+So for print the 'A' font, just get the PET relative code, multiply by 4 and then get next 4 consecutive bytes.
+The scheme is:
+
+1|2
+
+3|4
 
 ## Hints
 
