@@ -176,13 +176,14 @@ msg
 
 #### Horizontal right scrolling
 
-Software scrolling is often considered a pain in early '80 CPU because the process waste a lot of cycles.  
-Furthermore, while character RAM can be double-buffered (which is the most common used tecnique to scroll a scenario), color RAM have only one reserved memory area, therefore color RAM must be moved in 1 or 2 frames.  
 
-For this demo, instead of switching VIC-II bank, scrolling was made with unrolled loop code.  
-The following snippet show an example of both techniques:
+Software scrolling is often considered a pain in early '80 computers due to the big CPU usage request.  
+Furthermore, while character RAM can be double-buffered (which is the most common used tecnique to scroll a scenario), color RAM has only one reserved memory area, therefore all map must be copied in 1 or 2 frames.
+This is the so called "race the beam" trick; wait at a certain line (i.e. 150) and then start to copy color map from the top of thescreen.  
 
 ##### Switch VIC-II bank
+
+Take a look at the below code:
 
 ```
 ; shift screen left
@@ -214,10 +215,14 @@ rcopyscreenram
 	; copy screen ram, color ram, then swith bank using $d018
 ```
 
-The above code copy bytes from a certain position to another using indirect addressing; we can set sourcescreen and destscreen with respectively displayed screen and the alternate bank which works as the buffered screen.  
-When is time to scroll the entire character set, we can switch screen bank by setting correct bit flags on $D018.
+We copy bytes from a certain position to another using indirect addressing; we can set sourcescreen and destscreen with respectively displayed screen and the alternate bank which works as the buffered screen.  
+Notice that we can use the above code either for copying screen char or color map.  
+Once we have to scroll the entire character set, we can switch screen bank by setting correct bit flags on $D018.
 
 ##### Unrolled loop
+
+As the name suggest, unrolled loop code does not make usage of branches, so instead refer to address in direct mode; while the pro is the less cpu requirement, the cons is the ram usage because a lot of code is needed.
+Take a look at the snippet below:
 
 ```
 copyramscreen
