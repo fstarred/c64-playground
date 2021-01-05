@@ -133,13 +133,119 @@ colourloop
 
 #### Print big text on upper side of the screen
 
-The font size is 2x2 and is disposed easily as each letter takes 4 bytes which are consecutively ordered.
-So for print the 'A' font, just get the PET relative code, multiply by 4 and then get next 4 consecutive bytes.
+The font size is 2x2 and is disposed in a way that each letter takes 4 bytes which are consecutively ordered.
+Thus, for printing the 'A' letter, just get the PET relative code, multiply by 4 and then get next 4 consecutive bytes.
 The scheme is:
 
-1|2
-
+1|2  
 3|4
+
+```
+    lda msg
+    ldy #0
+    ldx #0
+printmsg
+    sec
+    sbc #$40 ; obtain correct character code
+
+    asl a
+    asl a ; multiply by 4
+
+    clc
+    sta $0400,x
+    adc #1
+    sta $0401,x
+    adc #1
+    sta $0400+40,x
+    adc #1
+    sta $0401+40,x
+
+    inx
+    inx ; move screen cursor by 2
+
+    iny ; increment text pointer
+    lda msg,y 
+    bne printmsg ; print text until reach byte 0
+    
+    
+
+msg
+    .text "starred mediasoft"
+    .byte 0
+```
+
+#### Horizontal right scrolling
+
+Software scrolling is often considered a pain in early '80 CPU because the process waste a lot of cycles.  
+Furthermore, while character RAM can be double-buffered (which is the most common used tecnique to scroll a scenario), color RAM have only one reserved memory area, therefore color RAM must be moved in 1 or 2 frames.  
+
+For this demo, instead of switching VIC-II bank, scrolling was made with unrolled loop code.  
+The following snippet show an example of both techniques:
+
+##### Switch VIC-II bank
+
+```
+; shift screen left
+rcopyscreenram
+	ldy #$00
+
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	cpy #36
+	bne rcopyscreenram+2
+	...
+	
+	; copy screen ram, color ram, then swith bank using $d018
+```
+
+The above code copy bytes from a certain position to another using indirect addressing; we can set sourcescreen and destscreen with respectively displayed screen and the alternate bank which works as the buffered screen.  
+When is time to scroll the entire character set, we can switch screen bank by setting correct bit flags on $D018.
+
+##### Unrolled loop
+
+```
+copyramscreen
+	lda $0401
+	sta $0400
+	lda $0402
+	sta $0401
+	lda $0403
+	sta $0402
+; and so on
+copyramcolor
+        lda $d801
+	sta $d800
+	lda $d802
+	sta $d801
+	lda $d803
+	sta $d802
+; and so on
+```
+
+Writing code that copy 1000+1000 bytes of char and color using this way may take even an half day, but luckly nowadays we have the right compilers for accomplish this mission:
+
+```
+.for ue := $0400, ue < $07e7, ue += $01
+	lda ue+1
+	sta ue
+.next
+```
 
 ## Hints
 
