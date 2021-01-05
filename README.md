@@ -413,6 +413,90 @@ roll_sea
     ror sea_char_bytepos+4
 ```
 
+#### Sprites
+
+As a general rule, all sprites scroll from right to left in a infinite loop; however some of these should not appear in some cases, while others switch with each other.  
+
+##### Street lamp
+
+Street lamp overlay upper and lower background, improving parallax effect between far and near scenario.
+When the sprite x coordinate is between $48 and $50, there is check to ensure the sprite is enabled only if is on the ground, just to ensure to not show it over the sea :)
+
+```
+    ; check if street lamp is on the sidewalk. When street lamp is on the right border,
+    ; verify that is on the sidewalk char and enable it, otherwise disable sprite
+    
+    lda $d010
+    and #%00000001
+    beq checkspr1
+
+    lda $d000
+    cmp #$50
+    bcs checkspr1 ; gte checkspr1
+    cmp #$48
+    bcc checkspr1 ; lt checkspr1
+
+    lda screen2+(totalcols*3)-1 ; check last char on col x
+    cmp #sidewalk_char1
+    beq enablespr0
+    
+    cmp #sidewalk_char2
+    beq enablespr0
+
+    lda $d015
+    and #%11111110
+    sta $d015       ; disable sprite
+
+    bne checkspr1   ; branch always
+ 
+enablespr0
+    
+    lda $d015
+    ora #%00000001
+    sta $d015       ; enable sprite
+```
+
+##### Sprite 4 (cloud / airplane)
+
+Everytime sprite 4 X coordinate reaches zero value, it switch between a cloud or an airplane.  
+These objects behave in a different way, as the airplane is faster and has some blinking lights; this effect is rendered by just dealing with 3 bytes of the sprite, in order to change color between available char and multicolor value.  
+
+```
+spr4switchlight
+
+    dec lightcnt
+    bne exit_spr4switchlight
+
+    lda sprite_airplane_addr+16
+    cmp #$0c
+    bne to0c
+
+    lda #$08
+    ldy #$28
+    bne spr4lights
+to0c
+    lda #$0c
+    ldy #$2c
+spr4lights
+    sta sprite_airplane_addr+14
+    sta sprite_airplane_addr+16
+    sty sprite_airplane_addr+34
+
+    ldx lightptr
+    bne declightptr
+    ldx #$04
+
+declightptr
+    dex
+    stx lightptr
+
+    lda lighttbl,x
+    sta lightcnt
+
+exit_spr4switchlight
+    rts
+```
+
 ## Hints
 
 ### Badline
