@@ -84,7 +84,173 @@ $2b40 - $2c3f (140 bytes color  RAM)
 $2c40 background
 ```
 
+## Demo
 
+### Nightly City
+
+![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/nightly-city.gif?raw=true)
+
+#### Scrolling carousel text
+
+This effect was ripped from [DavesClassics C64 video 05 YouTube video](https://www.youtube.com/watch?v=JR9Ou-62cEY&t=708s).
+
+The carousel effect is done by rolling colors stored in ram and apply each rasterline.
+
+Snippet for rotating color:
+
+```
+rotatecolours
+	ldx #0
+looprotcol
+	lda ramcolour+1,x
+	sta ramcolour,x
+	inx
+	cpx #$40
+	bne looprotcol
+	lda ramcolour
+	sta ramcolour-1+$40
+```
+
+Apply different color for each line:
+
+```
+	ldx #0
+colourloop
+	lda ramcolour,x
+	tay
+
+	lda $d012
+	cmp $d012
+	beq *-3
+
+	sty $d021
+	inx
+
+	lda #irq_0+9
+	cmp $d012
+	bne colourloop
+```
+
+#### Print big text on upper side of the screen
+
+The font size is 2x2 and is disposed in a way that each letter takes 4 bytes which are consecutively ordered.
+Thus, for printing the 'A' letter, just get the PET relative code, multiply by 4 and then get next 4 consecutive bytes.
+The scheme is:
+
+1|2  
+3|4
+
+```
+    lda msg
+    ldy #0
+    ldx #0
+printmsg
+    sec
+    sbc #$40 ; obtain correct character code
+
+    asl a
+    asl a ; multiply by 4
+
+    clc
+    sta $0400,x
+    adc #1
+    sta $0401,x
+    adc #1
+    sta $0400+40,x
+    adc #1
+    sta $0401+40,x
+
+    inx
+    inx ; move screen cursor by 2
+
+    iny ; increment text pointer
+    lda msg,y 
+    bne printmsg ; print text until reach byte 0
+    
+    
+
+msg
+    .text "starred mediasoft"
+    .byte 0
+```
+
+#### Horizontal right scrolling
+
+
+Software scrolling is often considered a pain in early '80 computers due to the big CPU usage request.  
+Furthermore, while character RAM can be double-buffered (which is the most common used tecnique to scroll a scenario), color RAM has only one reserved memory area, therefore all map must be copied in 1 or 2 frames.
+This is the so called "race the beam" trick; wait at a certain line (i.e. 150) and then start to copy color map from the top of thescreen.  
+
+##### Switch VIC-II bank
+
+Take a look at the below code:
+
+```
+; shift screen left
+rcopyscreenram
+	ldy #$00
+
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	lda (sourcescreen),y
+	sta (destscreen),y
+	iny
+	cpy #36
+	bne rcopyscreenram+2
+	...
+	
+	; copy screen ram, color ram, then swith bank using $d018
+```
+
+We copy bytes from a certain position to another using indirect addressing; we can set sourcescreen and destscreen with respectively displayed screen and the alternate bank which works as the buffered screen.  
+Notice that we can use the above code either for copying screen char or color map.  
+Once we have to scroll the entire character set, we can switch screen bank by setting correct bit flags on $D018.
+
+##### Unrolled loop
+
+As the name suggest, unrolled loop code does not make usage of branches, so instead refer to address in direct mode; while the pro is the less cpu requirement, the cons is the ram usage because a lot of code is needed.
+Take a look at the snippet below:
+
+```
+copyramscreen
+	lda $0401
+	sta $0400
+	lda $0402
+	sta $0401
+	lda $0403
+	sta $0402
+; and so on
+copyramcolor
+        lda $d801
+	sta $d800
+	lda $d802
+	sta $d801
+	lda $d803
+	sta $d802
+; and so on
+```
+
+Writing code that copy 1000+1000 bytes of char and color using this way may take even an half day, but luckly nowadays we have the right compilers for accomplish this mission:
+
+```
+.for ue := $0400, ue < $07e7, ue += $01
+	lda ue+1
+	sta ue
+.next
+```
 
 ## Hints
 
