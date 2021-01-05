@@ -1618,7 +1618,7 @@ bstars13
     sta (sourcescreen),y
 bstars_2
     inx
-    cpx #12*2
+    cpx #starpositionend-starposition
     bne exit_bstars
    
     lda #delayblinkstar
@@ -1673,7 +1673,7 @@ ls_1
     
 ls_2	
 	inx
-	cpx #12*2
+	cpx #starpositionend-starposition
 	bne loopstar
 	
 	rts
@@ -2267,6 +2267,7 @@ starposition
 	.word screen1+03*40+31,screen1+04*40+10,screen1+05*40+19,screen1+05*40+29
 	.word screen1+06*40+02,screen1+06*40+28,screen1+07*40+15,screen1+08*40+18
 ;	.word screen1+08*40+32,screen1+08*40+03,screen1+09*40+12,screen1+09*40+23
+starpositionend
 charpointer
 	.byte 0
 ramcolourbck
