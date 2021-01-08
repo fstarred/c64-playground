@@ -252,6 +252,26 @@ Writing code that copy 1000+1000 bytes of char and color using this way may take
 .next
 ```
 
+#### Parallax effect
+
+If you take a look at [this page](https://www.c64-wiki.com/wiki/Parallax_Scrolling) we can see that exists a few techniques for developing a parallax effect on C64.  
+Probably the most easier trick is to use rasterlines, thus we have to deal with irqs.
+Playfield is divided by two sections: the vertical upper tile is formed by 11 chars, whereas the bottom has 5 chars, for a total height of 16 chars.  
+Each section has its own horizontal raster scroll value (d016); once raster reach line 209 (thus interrupt is triggered) we have to waste some cycles to avoid bad flickering due to horizontal scroll changes.
+
+```
+	#wait_5x_cycles 9
+
+	lda $d016
+	and #248
+	ora xoffset_lower
+	sta $d016
+
+	lda $d012
+	cmp $d012
+	beq *-3
+```
+
 #### Fixed stars on background
 
 First off, we create a star position map address:
@@ -385,7 +405,7 @@ roll_stars
 	sta star_char_bytepos+4
 ```
 
-#### Sea animation
+#### Sea motion
 
 The following code wait until delay counter reaches zero, and then apply char rolling for display sea animation.
 
