@@ -90,13 +90,11 @@ $2c40 background
 
 ![screenshot](https://github.com/fstarred/c64-playground/blob/master/docs/gifs/nightly-city.gif?raw=true)
 
-#### Scrolling carousel text
+#### Scrolling text with carousel effect
 
-This effect was ripped from [DavesClassics C64 video 05 YouTube video](https://www.youtube.com/watch?v=JR9Ou-62cEY&t=708s).
+The carousel effect was ripped from [DavesClassics C64 video 05 YouTube video](https://www.youtube.com/watch?v=JR9Ou-62cEY&t=708s); it is made by rolling colors stored in ram and applying it for each rasterline.
 
-The carousel effect is done by rolling colors stored in ram and apply each rasterline.
-
-Snippet for rotating color:
+Snippet for rotating color bank:
 
 ```
 rotatecolours
@@ -111,7 +109,7 @@ looprotcol
 	sta ramcolour-1+$40
 ```
 
-Apply different color for each line:
+Applying different color for each line:
 
 ```
 	ldx #0
@@ -134,7 +132,7 @@ colourloop
 #### Printing text with custom font on upper side of the screen
 
 The font size is 2x2 and is disposed in a way that each letter takes 4 bytes which are consecutively ordered.
-Thus, for printing the 'A' letter, just get the PET relative code, obtain the upper / lower case code with substract the value, multiply by 4 and then get next 4 consecutive bytes.
+Thus, for printing the 'A' letter, just calculate the PET relative code and subtract it to obtain the relative upper/lower case value, multiply by 4 and then get next 4 consecutive bytes.
 The scheme is:
 
 1|2  
@@ -178,7 +176,7 @@ msg
 
 
 Software scrolling is often considered a pain in early '80 computers due to the big CPU usage request.  
-Furthermore, while character RAM can be double-buffered (which is the most common used tecnique to scroll a scenario), color RAM has only one reserved memory area, therefore all map must be copied in 1 or 2 frames.
+Furthermore, while character RAM can be double-buffered (which is the most common used tecnique to scroll a background), color RAM has only one reserved memory area, therefore all char map must be copied within 1 or 2 frames.
 This is the so called "race the beam" trick; wait at a certain line (i.e. 150) and then start to copy color map from the top of thescreen.  
 
 ##### Switch VIC-II bank
@@ -215,13 +213,13 @@ rcopyscreenram
 	; copy screen ram, color ram, then swith bank using $d018
 ```
 
-We copy bytes from a certain position to another using indirect addressing; we can set sourcescreen and destscreen with respectively displayed screen and the alternate bank which works as the buffered screen.  
-Notice that we can use the above code either for copying screen char or color map.  
+We copy bytes from a certain position to another using indirect addressing; we can set sourcescreen and destscreen with respectively displayed screen and the alternate bank which works as the buffered screen.    
 Once we have to scroll the entire character set, we can switch screen bank by setting correct bit flags on $D018.
+Notice that we can use the above code either for copying screen char or color map.
 
-##### Unrolled loop
+##### Unrolled loop code
 
-As the name suggest, unrolled loop code does not make usage of branches, so instead refer to address in direct mode; while the pro is the less cpu requirement, the cons is the ram usage because a lot of code is needed.
+As the name suggest, the unrolled loop code technique replace the branch jumps in favour of referring to memory in direct mode; while the pros is the less cpu requirement, the cons is the ram usage because a lot of code is needed.
 Take a look at the snippet below:
 
 ```
@@ -243,7 +241,7 @@ copyramcolor
 ; and so on
 ```
 
-Writing code that copy 1000+1000 bytes of char and color using this way may take even an half day, but luckly nowadays we have the right compilers for accomplish this mission:
+Writing code that copy 1000+1000 bytes of char and color with the above method may take even an half day, but luckly nowadays we have the right compilers for accomplish this mission:
 
 ```
 .for ue := $0400, ue < $07e7, ue += $01
@@ -254,14 +252,14 @@ Writing code that copy 1000+1000 bytes of char and color using this way may take
 
 #### Parallax effect
 
-If you take a look at [this page](https://www.c64-wiki.com/wiki/Parallax_Scrolling) we can see that exists a few techniques for developing a parallax effect on C64.  
-Probably the most easier trick is to use rasterlines, thus we have to deal with irqs.
-Playfield is divided by two sections: the vertical upper tile is formed by 11 chars, whereas the bottom has 5 chars, for a total height of 16 chars.  
-Each section has its own horizontal raster scroll value (d016); once raster reach line 209 (thus interrupt is triggered) we have to waste some cycles to avoid bad flickering due to horizontal scroll changes.
+If you take a look at [this page](https://www.c64-wiki.com/wiki/Parallax_Scrolling) we can see that even in the old times some few techniques were used for creating nice parallax effect on C64.  
+Probably the most easier trick is to use rasterlines, that require just to deal with irqs using the right timing.  
+On this demo, playfield is divided by two sections: the vertical upper tile is formed by 11 chars, whereas the bottom has 5 chars, for a total vertical line of 16 chars displayed on the screen.  
+Each section has its own horizontal raster scroll value (d016); once raster reach line 209 (thus interrupt is triggered) we have to skip some cycles to avoid bad flickering due to horizontal scroll changes.
 
 ```
-	#wait_5x_cycles 9
-
+	#wait_5x_cycles 9 ; this macro does some empty loops
+        ; Wait 45 cycles
 	lda $d016
 	and #248
 	ora xoffset_lower
@@ -274,7 +272,7 @@ Each section has its own horizontal raster scroll value (d016); once raster reac
 
 #### Fixed stars on background
 
-First off, we create a star position map address:
+First off, we must create a star position map block:
 
 ```
 starposition
@@ -284,9 +282,9 @@ starposition
 starpositionend
 ```
 
-The star's position on the screen is expressed in word, as the available space on screen has more of 256 slots.
+The star's position on the screen is expressed in words, as the stars may be positioned over all the screen (that is more than 256 available slots)
 
-The following snippet fetch starposition table and display them on screen:
+The following snippet fetch starposition table and display stars on screen:
 
 ```
 createstars
@@ -337,7 +335,7 @@ ls_1
 	sta (sourcescreen),y
 ```
 
-In order to improve stars rendering, we make blink them. 
+In order to improve stars rendering, we make blink them with a certain pace. 
 The following code wait until counter delay reaches zero, and then change the star color for each frame until all stars are rendered so the delay counter reset.
 
 ```
@@ -407,9 +405,9 @@ roll_stars
 
 #### Sea motion
 
-The following code wait until delay counter reaches zero, and then apply char rolling for display sea animation.
+The following code wait until delay counter reaches zero, and then apply char rolling for creating a sense of motion to the sea.  
 
-Notice the "ror a" is just called for store the original bit 0 to Carry; "ror sea_char_bytepos+<n>" shift the original bit 0 to 7 and so the ror works properly. 
+On the code below, we notice the "ror a" is called just for storing the original bit 0 to Carry; "ror sea_char_bytepos+<n>" shift the original bit 0 to 7 and so the ror works properly. 
 
 ```
 roll_sea
@@ -437,10 +435,10 @@ roll_sea
 
 As a general rule, all sprites scroll from right to left in a infinite loop; however some of these should not appear in some cases, while others switch with each other.  
 
-##### Street lamp
+##### Street lamp object
 
-Street lamp overlay upper and lower background, improving parallax effect between far and near scenario.
-When the sprite x coordinate is between $48 and $50, there is check to ensure the sprite is enabled only if is on the ground, just to ensure to not show it over the sea :)
+Street lamp overlay upper and lower background, improving parallax effect between far and near background.
+When the sprite x coordinate is between $48 and $50, a check ensure the sprite is enabled only if is on the ground, just to make sure we'll not see it leading over the sea :)
 
 ```
     ; check if street lamp is on the sidewalk. When street lamp is on the right border,
@@ -478,7 +476,7 @@ enablespr0
 
 ##### Sprite 4 (cloud / airplane)
 
-Everytime sprite 4 X coordinate reaches zero value, it switch between a cloud or an airplane.  
+Everytime sprite 4 X coordinate reaches zero value, it switch to a cloud or an airplane object.   
 These objects behave in a different way, as the airplane is faster and has some blinking lights; this effect is rendered by just dealing with 3 bytes of the sprite, in order to change color between available char and multicolor value.  
 
 ```
