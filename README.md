@@ -6,7 +6,7 @@ This repo contains two kind of source files:
 * .seq
 * .asm
 
-While <i>.seq</i> is granted to run either from native C64 assembler (ex. Turbo Assemler or C64 TMP) and 64Tass cross assembler, the latter format is oftern compiled with <i>64tass</i> using specific options to grant as more compliance as possible with old assemblers.
+While <i>.seq</i> is granted to run either from native C64 assembler (ex. Turbo Assemler or C64 TMP) and 64Tass cross assembler, the latter format is often compiled with <i>64tass</i> using specific options to grant as more compliance as possible with old assemblers.
 
 Therefore, in many cases it may be enough to replace <i>underscore</i> char with a blank one some else PETSCII char available for example and the program may be assembled even from TASM.
 
@@ -241,7 +241,7 @@ copyramcolor
 ; and so on
 ```
 
-Writing code that copy 1000+1000 bytes of char and color with the above method may take even an half day, but luckly nowadays we have the right compilers for accomplish this mission:
+Writing code that copy 1000+1000 bytes of char and color with the above method may take even an half day, but luckly nowadays we have the right compilers for accomplish this task:
 
 ```
 .for ue := $0400, ue < $07e7, ue += $01
@@ -254,7 +254,7 @@ Writing code that copy 1000+1000 bytes of char and color with the above method m
 
 If you take a look at [this page](https://www.c64-wiki.com/wiki/Parallax_Scrolling) we can see that even in the old times some few techniques were used for creating nice parallax effect on C64.  
 Probably the most easier trick is to use rasterlines, that require just to deal with irqs using the right timing.  
-On this demo, playfield is divided by two sections: the vertical upper tile is formed by 11 chars, whereas the bottom has 5 chars, for a total vertical line of 16 chars displayed on the screen.  
+On this demo, playfield is divided by two sections: the vertical upper tile is formed by 11 chars whereas the bottom has 5 chars, for a total of 16 vertical chars displayed on the screen.  
 Each section has its own horizontal raster scroll value (d016); once raster reach line 209 (thus interrupt is triggered) we have to skip some cycles to avoid bad flickering due to horizontal scroll changes.
 
 ```
@@ -305,7 +305,7 @@ loopstar
 	sta (sourcescreen),y
 ```
 
-The bck_starchar character is later used to determine the presence of the star in the previous frame (thus is no covered by building) and get its current color, in order to copy it to the current block.
+The bck_starchar character is later used to determine the presence of the star in the previous frame (which is not covered by building) and get its current color, in order to copy it to the current block.
 
 ```
     lda bck_starchar
@@ -322,7 +322,7 @@ The bck_starchar character is later used to determine the presence of the star i
     sta (sourcescreen),y
 ```
 
-Everytime soft scrolling is called, we have to relocate stars to the same position of the previous frame. The following clears all copied stars
+Everytime soft scrolling is called, we have to relocate stars to the same position of the previous frame. The following snippet clears all copied stars
 
 ```
 ls_1	
@@ -394,7 +394,7 @@ exit_bstars
     rts
 ```
 
-Everytime we hardscroll video, we have to roll the star too in order to "follow" the screen and show star fixed on it.
+Everytime we hardscroll video, we have to roll the star as well in order to "follow" the screen and show star fixed on it.
 
 ```
 roll_stars
@@ -433,7 +433,7 @@ roll_sea
 
 #### Sprites
 
-As a general rule, all sprites scroll from right to left in a infinite loop; however some of these should not appear in some cases, while others switch with each other.  
+As a general rule, all sprites in this demo moves from right to left in a infinite loop; some sprites switch with each other every time one finish its course. 
 
 ##### Street lamp object
 
