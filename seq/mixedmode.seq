@@ -1,170 +1,1 @@
-;---------------------------------------
-;
-;   MIXED GRAPHICS MODE EXAMPLE
-;
-;---------------------------------------
-;
-; ASSEMBLE INSTRUCTIONS
-;
-; - LOAD "MULTICOLOR.PRG" AT $2000
-;
-; - LOAD  "CHROME.64C" AT $3800
-;
-;---------------------------------------
-
-
-
-         *= $1000
-
-SCRTXTMSG = $0400+(40*15)+4
-SCRCOLOR = $D800+(40*15)+4
-
-         SEI
-
-         JSR DRAWMCOLTEXT
-
-;---------------------------------------
-;
-;   LOAD BITMAP INTO MEMORY
-;
-;---------------------------------------
-
-
-         LDA $3770;BACKGROUND DATA
-         STA $D020;BORDER SCREEN COLOR
-         STA $D021;BGRND  SCREEN COLOR
-         LDX #$00
-
-LOADIMAGE ; 320 * 120 HEIGHT
-         LDA $32C0,X; CHARMEM DATA
-         STA $0400,X
-         LDA $33C0,X
-         STA $0500,X
-         LDA $3418,X
-         STA $0558,X
-         LDA $3518,X; COLORMEM DATA
-         STA $D800,X
-         LDA $3618,X
-         STA $D900,X
-         LDA $3670,X
-         STA $D958,X
-         INX
-         BNE LOADIMAGE
-
-         LDA $DD00
-         AND #$FC
-         ORA #$03
-         STA $DD00; BANK $0000-$3FFF
-
-;---------------------------------------
-;
-;   MULTICOLOR BITMAP SECTION
-;
-;---------------------------------------
-
-
-MAIN
-
-         LDA #$00
-         CMP $D012
-         BNE *-3; WAIT RASTER 0
-
-         LDA #$3B
-         STA $D011; BITMAP
-
-         LDA $D016
-         ORA #$10; MULTICOLOR
-         STA $D016
-
-         LDA #$18; ADDRESS $2000
-         STA $D018
-
-         LDA #0; BGCOLOR
-         STA $D021
-
-         LDA #$A3; WAIT RASTER 163
-         CMP $D012
-         BNE *-3
-
-;---------------------------------------
-;
-;   MULTICOLOR TEXT SECTION
-;
-;---------------------------------------
-
-
-         LDA #$1B; TEXT MODE
-         STA $D011
-
-         LDA #$1E; ADDRESS $3800
-         STA $D018
-
-         LDA $D016
-         ORA #$10; MULTICOLOR
-         STA $D016
-
-         LDA #$0B; BGCOLOR
-         STA $D021
-
-         LDA #$00; MULTICOLOR 1
-         STA $D022
-
-         LDA #$01; MULTICOLOR 2
-         STA $D023
-
-         JMP MAIN
-
-;---------------------------------------
-;
-;   PREPARE SCREEN MULTICOLOR TEXT MODE
-;
-;---------------------------------------
-
-DRAWMCOLTEXT
-
-         LDX #0
-LOADDAT
-         LDA #0;CLEAR 2ND HALF SCREEN
-         STA $0658,X
-         STA $06E8,X
-         LDA #11;FILL  2ND HALF MEM COL
-         STA $DA58,X
-         STA $DAE8,X
-         INX
-         BNE LOADDAT
-
-;---------------------------------------
-;
-;   COMPOSE MESSAGE
-;
-;---------------------------------------
-
-
-         LDY #0
-         LDX #0
-         LDA MESSAGE,X
-LOOPMSG
-         ASL A
-         ASL A
-         STA SCRTXTMSG,Y
-         CLC
-         ADC #1
-         STA SCRTXTMSG+1,Y
-         ADC #1
-         STA SCRTXTMSG+40,Y
-         ADC #1
-         STA SCRTXTMSG+41,Y
-         INX
-         INY
-         INY
-         LDA MESSAGE,X
-         CMP #$FF
-         BNE LOOPMSG
-
-         RTS
-
-
-MESSAGE
-         .TEXT "MULTICOLOR@TEXT"
-         .BYTE $FF
-
+;---------------------------------------;;   MIXED GRAPHICS MODE EXAMPLE;;---------------------------------------;; ASSEMBLE INSTRUCTIONS;; - LOAD "MULTICOLOR.PRG" AT $2000;; - LOAD  "CHROME.64C" AT $3800;;---------------------------------------         *= $1000SCRTXTMSG = $0400+(40*15)+4SCRCOLOR = $D800+(40*15)+4         SEI         JSR DRAWMCOLTEXT;---------------------------------------;;   LOAD BITMAP INTO MEMORY;;---------------------------------------         LDA $3770;BACKGROUND DATA         STA $D020;BORDER SCREEN COLOR         STA $D021;BGRND  SCREEN COLOR         LDX #$00LOADIMAGE ; 320 * 120 HEIGHT         LDA $32C0,X; CHARMEM DATA         STA $0400,X         LDA $33C0,X         STA $0500,X         LDA $3418,X         STA $0558,X         LDA $3518,X; COLORMEM DATA         STA $D800,X         LDA $3618,X         STA $D900,X         LDA $3670,X         STA $D958,X         INX         BNE LOADIMAGE         LDA $DD00         AND #$FC         ORA #$03         STA $DD00; BANK $0000-$3FFF;---------------------------------------;;   MULTICOLOR BITMAP SECTION;;---------------------------------------MAIN         LDA #$00         CMP $D012         BNE *-3; WAIT RASTER 0         LDA #$3B         STA $D011; BITMAP         LDA $D016         ORA #$10; MULTICOLOR         STA $D016         LDA #$18; ADDRESS $2000         STA $D018         LDA #0; BGCOLOR         STA $D021         LDA #$A3; WAIT RASTER 163         CMP $D012         BNE *-3;---------------------------------------;;   MULTICOLOR TEXT SECTION;;---------------------------------------         LDA #$1B; TEXT MODE         STA $D011         LDA #$1E; ADDRESS $3800         STA $D018         LDA $D016         ORA #$10; MULTICOLOR         STA $D016         LDA #$0B; BGCOLOR         STA $D021         LDA #$00; MULTICOLOR 1         STA $D022         LDA #$01; MULTICOLOR 2         STA $D023         JMP MAIN;---------------------------------------;;   PREPARE SCREEN MULTICOLOR TEXT MODE;;---------------------------------------DRAWMCOLTEXT         LDX #0LOADDAT         LDA #0;CLEAR 2ND HALF SCREEN         STA $0658,X         STA $06E8,X         LDA #11;FILL  2ND HALF MEM COL         STA $DA58,X         STA $DAE8,X         INX         BNE LOADDAT;---------------------------------------;;   COMPOSE MESSAGE;;---------------------------------------         LDY #0         LDX #0         LDA MESSAGE,XLOOPMSG         ASL A         ASL A         STA SCRTXTMSG,Y         CLC         ADC #1         STA SCRTXTMSG+1,Y         ADC #1         STA SCRTXTMSG+40,Y         ADC #1         STA SCRTXTMSG+41,Y         INX         INY         INY         LDA MESSAGE,X         CMP #$FF         BNE LOOPMSG         RTSMESSAGE         .TEXT "MULTICOLOR@TEXT"         .BYTE $FF
