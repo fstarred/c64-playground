@@ -1,53 +1,53 @@
 ;---------------------------------------
 ;
-;   IN-MEMORY CHARSET EXAMPLE
+;   in-memory charset example
 ;
 ;
 ;---------------------------------------
 
          *= $1000
 
-         JSR $E544
+         jsr $e544
 
-         SEI
-MAIN
-         LDA #0
-         CMP $D012
-         BNE *-3
+         sei
+main
+         lda #0
+         cmp $d012
+         bne *-3
 
-         LDA #4
-         STA $D021
+         lda #4
+         sta $d021
 
-         LDA #$17
-         STA $D018    ;VIC BANK 2
+         lda #$17
+         sta $d018    ;vic bank 2
 
-         LDA #$00
-         LDX #$00
+         lda #$00
+         ldx #$00
 
-LOOP
-         STA $0400,X
-         INX
-         TXA
-         BNE LOOP
+loop
+         sta $0400,x
+         inx
+         txa
+         bne loop
 
-         LDA #$82
-         CMP $D012
-         BNE *-3
+         lda #$82
+         cmp $d012
+         bne *-3
 
-         LDA #6
-         STA $D021
+         lda #6
+         sta $d021
 
-         LDA #$15
-         STA $D018    ; VIC BANK 1
+         lda #$15
+         sta $d018    ; vic bank 1
 
-         LDA #$00
-         LDX #$00
+         lda #$00
+         ldx #$00
 
-LOOP2
-         STA $0590,X
-         INX
-         TXA
-         BNE LOOP2
+loop2
+         sta $0590,x
+         inx
+         txa
+         bne loop2
 
-         JMP MAIN
+         jmp main
 
