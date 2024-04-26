@@ -543,7 +543,7 @@ The following is a collection of noticeable source sites:
 * https://csdb.dk - The C64 Scene Database
 
 ### Articles
-* http://www.antimon.org/code.asp - This is probably the holy bible for start programming with C64 (at least it was for me)
+* https://www.antimon.org/code/Linus - This is probably the holy bible for start programming with C64 (at least it was for me)
 * https://github.com/petriw/Commodore64Programming
 * https://dwheeler.com/6502/oneelkruns/asm1step.html - An assembly friendly guide
 
